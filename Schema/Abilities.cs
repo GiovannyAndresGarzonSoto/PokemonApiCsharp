@@ -3,15 +3,17 @@ using MongoDB.Bson;
 
 namespace PokemonApi.Schema
 {
-    public class Group
+    public class Abilities
     {
         [BsonId]
         public ObjectId Id { get; set; }
-        
+
         [BsonElement("name")]
-        public String Name { get; set; }
-        
+        [BsonRequired]
+        public string Name { get; set; }
+
         [BsonElement("description")]
+        [BsonRequired]
         public string Description { get; set; }
 
         [BsonElement("createdAt")]

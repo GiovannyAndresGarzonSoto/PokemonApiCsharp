@@ -10,23 +10,23 @@ namespace PokemonApi.Controllers
     public class MoveController : Controller
     {
         private readonly IMongoDatabase _database;
-        private readonly IMongoCollection<Move> _moves;
+        private readonly IMongoCollection<Moves> _moves;
 
         public MoveController(IMongoDatabase database)
         {
             _database = database;
-            _moves = _database.GetCollection<Move>("Moves");
+            _moves = _database.GetCollection<Moves>("Moves");
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Move>>> GetAll()
+        public async Task<ActionResult<IEnumerable<Moves>>> GetAll()
         {
             var moves = await _moves.Find(_ => true).ToListAsync();
-            return Ok(moves);
+            return Ok(new { success = true, moves });
         }
 
-        [HttpGet("{id}", Name = "GetById")]
-        public async Task<ActionResult<Move>> GetById(ObjectId id)
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Moves>> GetById(ObjectId id)
         {
             var move = await _moves.Find(m => m.Id == id).FirstOrDefaultAsync();
 
@@ -35,14 +35,41 @@ namespace PokemonApi.Controllers
                 return BadRequest(new { success = false, message = "El Movimiento no existe." });
             }
 
-            return Ok(move);
+            return Ok(new{ success = true, move });
         }
 
         [HttpPost]
-        public async Task<ActionResult<Move>> Create([FromBody] Move newMove)
+        public async Task<ActionResult<Moves>> Create([FromBody] Moves newMove)
         {
             await _moves.InsertOneAsync(newMove);
-            return CreatedAtRoute("GetById", new { id = newMove.Id }, newMove);
+            return Ok(new {success = true, message = "Movimiento creado con exito."});
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(ObjectId id, [FromBody] Moves updatedMove)
+        {
+            var move = await _moves.Find(m => m.Id == id).FirstOrDefaultAsync();
+            if (move == null)
+            {
+                return BadRequest(new { success = false, message = "El Movimiento no existe." });
+            }
+
+            updatedMove.Id = move.Id; 
+            await _moves.ReplaceOneAsync(m => m.Id == id, updatedMove);
+
+            return Ok(new { success = true, message = "Movimiento actualizado con exito." });
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(ObjectId id)
+        {
+            var result = await _moves.DeleteOneAsync(m => m.Id == id);
+            if (result.DeletedCount == 0)
+            {
+                return NotFound();
+            }
+
+            return Ok(new { success = true, message = "Movimiento eliminado con exito." });
         }
     }
 }

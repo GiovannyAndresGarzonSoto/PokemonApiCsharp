@@ -3,21 +3,15 @@ using MongoDB.Bson;
 
 namespace PokemonApi.Schema
 {
-    public class Class
+    public class Groups
     {
         [BsonId]
         public ObjectId Id { get; set; }
-
+        
         [BsonElement("name")]
         [BsonRequired]
-        public string Name { get; set; }
-
-        [BsonElement("imageUrl")]
-        public string ImageUrl { get; set; }
-
-        [BsonElement("publicId")]
-        public string PublicId { get; set; }
-
+        public String Name { get; set; }
+        
         [BsonElement("createdAt")]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }

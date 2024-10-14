@@ -1,4 +1,8 @@
 using MongoDB.Driver;
+using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
+using dotenv.net;
+using PokemonApi.Services.PokemonApi.Services;
 
 namespace PokemonApi
 {
@@ -10,7 +14,9 @@ namespace PokemonApi
 
             var mongoDbSettings = builder.Configuration.GetSection("MongoDB");
             var connectionString = mongoDbSettings["ConnectionString"];
-            var databaseName = mongoDbSettings["pokemon"];
+            var databaseName = mongoDbSettings["DatabaseName"];
+
+            builder.Services.AddScoped<CloudinaryService>();
 
             builder.Services.AddSingleton<IMongoClient>(sp => new MongoClient(connectionString));
 
@@ -32,6 +38,7 @@ namespace PokemonApi
                 app.UseSwaggerUI();
             }
 
+            app.UseCors("AllowAllOrigins");
             app.UseHttpsRedirection();
             app.UseAuthorization();
             app.MapControllers();

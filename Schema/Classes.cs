@@ -3,7 +3,7 @@ using MongoDB.Bson;
 
 namespace PokemonApi.Schema
 {
-    public class Ability
+    public class Classes
     {
         [BsonId]
         public ObjectId Id { get; set; }
@@ -12,9 +12,11 @@ namespace PokemonApi.Schema
         [BsonRequired]
         public string Name { get; set; }
 
-        [BsonElement("description")]
-        [BsonRequired]
-        public string Description { get; set; }
+        [BsonElement("imageUrl")]
+        public string ImageUrl { get; set; }
+
+        [BsonElement("publicId")]
+        public string PublicId { get; set; }
 
         [BsonElement("createdAt")]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

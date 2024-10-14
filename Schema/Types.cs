@@ -3,7 +3,7 @@ using MongoDB.Bson;
 
 namespace PokemonApi.Schema
 {
-    public class Type
+    public class Types
     {
         [BsonId]
         public ObjectId Id { get; set; }
