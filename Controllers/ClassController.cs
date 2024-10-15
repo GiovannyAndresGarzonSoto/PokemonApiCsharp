@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
+using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using PokemonApi.Schema;
@@ -11,10 +13,12 @@ namespace PokemonApi.Controllers
     {
         private readonly IMongoDatabase _database;
         private readonly IMongoCollection<Classes> _classes;
-        public ClassController(IMongoDatabase database)
+        private readonly Cloudinary _cloudinary;
+        public ClassController(IMongoDatabase database, Cloudinary cloudinary)
         {
             _database = database;
             _classes = _database.GetCollection<Classes>("Classes");
+            _cloudinary = cloudinary;
         }
 
         [HttpGet]
@@ -25,7 +29,7 @@ namespace PokemonApi.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Classes>> GetById(ObjectId id)
+        public async Task<ActionResult<Classes>> GetById(string id)
         {
             var classe = await _classes.Find(m => m.Id == id).FirstOrDefaultAsync();
 
@@ -38,14 +42,32 @@ namespace PokemonApi.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Classes>> Create([FromBody] Classes newClasse)
+        [Consumes("multipart/form-data")]
+        public async Task<ActionResult<Classes>> Create([FromForm] IFormFile image, [FromForm] string name)
         {
+            var uploadParams = new ImageUploadParams
+            {
+                File = new FileDescription(image.FileName, image.OpenReadStream()),
+                UseFilename = true,
+                UniqueFilename = true,
+                Overwrite = true
+            };
+
+            var uploadResult = _cloudinary.Upload(uploadParams);
+
+            var newClasse = new Classes
+            {
+                Name = name,
+                ImageUrl = uploadResult.SecureUrl.ToString(),
+                PublicId = uploadResult.PublicId
+            };
+
             await _classes.InsertOneAsync(newClasse);
-            return Ok(new { success = true, message = "Clase creada con exito." });
+            return Ok(new { success = true, message = "Clase creada con éxito.", newClasse });
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(ObjectId id, [FromBody] Classes updatedClasse)
+        public async Task<IActionResult> Update(string id, [FromBody] Classes updatedClasse)
         {
             var classe = await _classes.Find(m => m.Id == id).FirstOrDefaultAsync();
             if (classe == null)
@@ -60,7 +82,7 @@ namespace PokemonApi.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(ObjectId id)
+        public async Task<IActionResult> Delete(string id)
         {
             var result = await _classes.DeleteOneAsync(m => m.Id == id);
             if (result.DeletedCount == 0)

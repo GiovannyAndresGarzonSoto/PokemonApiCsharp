@@ -1,22 +1,26 @@
 ﻿namespace PokemonApi.Schema;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using System.ComponentModel.DataAnnotations;
 
 public class Pokemon
 {
-    [BsonId] 
-    public ObjectId Id { get; set; }
+    [BsonId]
+    [BsonRepresentation(BsonType.ObjectId)]
+    public string Id { get; set; }
 
     [BsonElement("number")]
     [BsonRequired] 
     public int Number { get; set; }
 
     [BsonElement("name")]
-    [BsonRequired] 
+    [BsonRequired]
+    [Required(ErrorMessage = "El nombre es obligatorio")]
     public string Name { get; set; }
 
     [BsonElement("description")]
-    [BsonRequired] 
+    [BsonRequired]
+    [Required(ErrorMessage = "La descripción es obligatoria")]
     public string Description { get; set; }
 
     [BsonElement("weight")]
@@ -52,11 +56,9 @@ public class Pokemon
     public int Speed { get; set; }
 
     [BsonElement("imageUrl")]
-    [BsonRequired] 
     public string ImageUrl { get; set; }
 
     [BsonElement("publicId")]
-    [BsonRequired] 
     public string PublicId { get; set; }
 
     [BsonElement("type1")]

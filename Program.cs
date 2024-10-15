@@ -1,8 +1,6 @@
 using MongoDB.Driver;
 using CloudinaryDotNet;
-using CloudinaryDotNet.Actions;
-using dotenv.net;
-using PokemonApi.Services.PokemonApi.Services;
+using PokemonApi.Services;
 
 namespace PokemonApi
 {
@@ -15,6 +13,17 @@ namespace PokemonApi
             var mongoDbSettings = builder.Configuration.GetSection("MongoDB");
             var connectionString = mongoDbSettings["ConnectionString"];
             var databaseName = mongoDbSettings["DatabaseName"];
+
+            builder.Services.AddSingleton<Cloudinary>(sp =>
+            {
+                var cloudinaryConfig = builder.Configuration.GetSection("Cloudinary");
+                var cloudName = cloudinaryConfig["CloudName"];
+                var apiKey = cloudinaryConfig["ApiKey"];
+                var apiSecret = cloudinaryConfig["ApiSecret"];
+                var account = new Account(cloudName, apiKey, apiSecret);
+
+                return new Cloudinary(account);
+            });
 
             builder.Services.AddScoped<CloudinaryService>();
 

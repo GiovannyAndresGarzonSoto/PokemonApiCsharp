@@ -26,7 +26,7 @@ namespace PokemonApi.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Types>> GetById(ObjectId id)
+        public async Task<ActionResult<Types>> GetById(string id)
         {
             var type = await _types.Find(m => m.Id == id).FirstOrDefaultAsync();
 
@@ -46,7 +46,7 @@ namespace PokemonApi.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(ObjectId id, [FromBody] Types updatedType)
+        public async Task<IActionResult> Update(string id, [FromBody] Types updatedType)
         {
             var type = await _types.Find(m => m.Id == id).FirstOrDefaultAsync();
             if (type == null)
@@ -61,7 +61,7 @@ namespace PokemonApi.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(ObjectId id)
+        public async Task<IActionResult> Delete(string   id)
         {
             var result = await _types.DeleteOneAsync(m => m.Id == id);
             if (result.DeletedCount == 0)

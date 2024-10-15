@@ -1,14 +1,18 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson;
+using System.ComponentModel.DataAnnotations;
 
 namespace PokemonApi.Schema
 {
     public class Types
     {
         [BsonId]
-        public ObjectId Id { get; set; }
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string Id { get; set; }
 
         [BsonElement("name")]
+        [BsonRequired]
+        [Required(ErrorMessage = "El nombre es obligatorio")]
         public string Name { get; set; }
 
         [BsonElement("imageUrl")]

@@ -26,7 +26,7 @@ namespace PokemonApi.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Moves>> GetById(ObjectId id)
+        public async Task<ActionResult<Moves>> GetById(string id)
         {
             var move = await _moves.Find(m => m.Id == id).FirstOrDefaultAsync();
 
@@ -46,7 +46,7 @@ namespace PokemonApi.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(ObjectId id, [FromBody] Moves updatedMove)
+        public async Task<IActionResult> Update(string id, [FromBody] Moves updatedMove)
         {
             var move = await _moves.Find(m => m.Id == id).FirstOrDefaultAsync();
             if (move == null)
@@ -61,7 +61,7 @@ namespace PokemonApi.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(ObjectId id)
+        public async Task<IActionResult> Delete(string id)
         {
             var result = await _moves.DeleteOneAsync(m => m.Id == id);
             if (result.DeletedCount == 0)

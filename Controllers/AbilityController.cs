@@ -5,6 +5,8 @@ using PokemonApi.Schema;
 
 namespace PokemonApi.Controllers
 {
+    [Route("api/ability")]
+    [ApiController]
     public class AbilityController : Controller
     {
         private readonly IMongoDatabase _database;
@@ -23,7 +25,7 @@ namespace PokemonApi.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Abilities>> GetById(ObjectId id)
+        public async Task<ActionResult<Abilities>> GetById(string id)
         {
             var classe = await _abilities.Find(m => m.Id == id).FirstOrDefaultAsync();
 
@@ -43,7 +45,7 @@ namespace PokemonApi.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(ObjectId id, [FromBody] Abilities updatedClasse)
+        public async Task<IActionResult> Update(string id, [FromBody] Abilities updatedClasse)
         {
             var classe = await _abilities.Find(m => m.Id == id).FirstOrDefaultAsync();
             if (classe == null)
@@ -58,7 +60,7 @@ namespace PokemonApi.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(ObjectId id)
+        public async Task<IActionResult> Delete(string id)
         {
             var result = await _abilities.DeleteOneAsync(m => m.Id == id);
             if (result.DeletedCount == 0)
